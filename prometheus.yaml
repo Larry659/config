@@ -1,15 +1,13 @@
 scrape_configs:
-  - job_name: 'order-service'
+  - job_name: 'spring-cloud-services'
     metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['order-service:8081']
+    eureka_sd_configs:
+      - server: 'http://eureka-server:8761/eureka'
 
-  - job_name: 'inventory-service'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: ['inventory-service:8082']
+    relabel_configs:
+      - source_labels: [__meta_eureka_app_name]
+        target_label: application
 
-  - job_name: 'product-service'
-    metrics_path: '/actuator/prometheus'
-    static_configs:
-      - targets: [ 'product-service:8080' ]
+      - source_labels: [__meta_eureka_instance_host, __meta_eureka_instance_port]
+        separator: ':'
+        target_label: instance
